@@ -142,7 +142,7 @@ discipline_level_of_studies_numeric	Numerical value of discipline_level_of_studi
 tq_3_option3	Option 3 for text question 3.	Manually created
 RRT	Re-reading time: sum of the durations of all fixations on a word that do not belong to the first-pass (TFT-FPRT).	compute_reading_measures.py
 RBRT	Right-bounded reading time: Sum of all fixation durations on a word until a word to the right of this word is fixated (RPD_inc-RDP_exc).	compute_reading_measures.py
-LP	Landing position: position of the first saccade on the word expressed by ordinal position of the fixated character.	compute_reading_measures.py
+LP	Landing position: position of the first saccade (i.e., only available for words that have been fixated in the first pass) on the word expressed by ordinal position of the fixated character.	compute_reading_measures.py
 TRC_out	Total count of outgoing regressions: total number of regressive saccades initiated from this word.	compute_reading_measures.py
 tq_2_option3	Option 3 for text question 2.	Manually created
 fixation_index	The index of the fixation in temporal order.	SR Research data viewer
