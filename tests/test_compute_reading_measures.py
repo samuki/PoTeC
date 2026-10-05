@@ -1,4 +1,4 @@
-"""Test terminal fixations."""
+"""Test reading measures and accuracy."""
 
 import json
 import tempfile
@@ -12,7 +12,7 @@ from additional_scripts.compute_reading_measures import compute_reading_measures
 
 
 class ComputeReadingMeasuresTest(unittest.TestCase):
-    def compute(self, fixations):
+    def compute(self, fixations, text_accuracy=(1, 1, 1), background_accuracy=(1, 1, 1)):
         """Export measures for a three-word text."""
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -40,7 +40,9 @@ class ComputeReadingMeasuresTest(unittest.TestCase):
                 rows.append({
                     'fixation_index': index, 'aoi': aoi, 'fixation_duration': duration,
                     'text_domain': 'biology', 'text_id': 'b0', 'trial': 7,
-                    **{f'acc_{kind}_{question}': 1 for kind in ('tq', 'bq') for question in (1, 2, 3)},
+                    **{f'acc_{kind}_{question}': value
+                       for kind, values in (('tq', text_accuracy), ('bq', background_accuracy))
+                       for question, value in enumerate(values, start=1)},
                 })
             pd.DataFrame(rows).to_csv(root / 'fixations/reader0_b0_fixations.tsv', sep='\t', index=False)
             compute_reading_measures(
@@ -114,6 +116,17 @@ class ComputeReadingMeasuresTest(unittest.TestCase):
         self.assertEqual(result.loc[2, 'TFC'], 1)
         self.assertEqual(result.loc[2, 'TFT'], 0)
         self.assertEqual(result.TFC.sum(), 2)
+
+    def test_accuracy_matches_question_type(self):
+        for text_accuracy, background_accuracy in (
+                ((1, 1, 0), (0, 0, 1)), ((0, 0, 1), (1, 1, 0))):
+            with self.subTest(text=text_accuracy, background=background_accuracy):
+                result = self.compute([(1, 100), (5, 200)], text_accuracy, background_accuracy)
+                for kind, values in (('tq', text_accuracy), ('bq', background_accuracy)):
+                    for question, value in enumerate(values, start=1):
+                        self.assertTrue(result[f'acc_{kind}_{question}'].eq(value).all())
+                    for actual in result[f'mean_acc_{kind}']:
+                        self.assertAlmostEqual(actual, sum(values) / 3)
 
     def test_short_sequences(self):
         for length in range(1, 5):

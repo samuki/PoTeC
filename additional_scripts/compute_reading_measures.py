@@ -177,8 +177,8 @@ def compute_reading_measures(
             acc_tq1, acc_tq2, acc_tq3 = fixation_file_sorted[['acc_tq_1', 'acc_tq_2', 'acc_tq_3']].mean()
             acc_bq1, acc_bq2, acc_bq3 = fixation_file_sorted[['acc_bq_1', 'acc_bq_2', 'acc_bq_3']].mean()
 
-            mean_acc_tq = statistics.mean([acc_bq1, acc_bq2, acc_bq3])
-            mean_acc_bq = statistics.mean([acc_tq1, acc_tq2, acc_tq3])
+            mean_acc_tq = statistics.mean([acc_tq1, acc_tq2, acc_tq3])
+            mean_acc_bq = statistics.mean([acc_bq1, acc_bq2, acc_bq3])
 
         except (ValueError, TypeError):
             # if no accuracy information is available, code with -1
